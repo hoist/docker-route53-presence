@@ -33,22 +33,16 @@ def register(hostname, ip, ttl):
   change.add_value(ip)
   return changes.commit()
 
-parser = argparse.ArgumentParser(description='Register or unregister a name in Route53.')
-parser.add_argument('hostname', help='fqdn to manipulate')
-parser.add_argument('--ttl', default=600, help='ttl in seconds, default 600')
-parser.add_argument('--local', action='store_true', help='use local IP instead of public')
-
-args = parser.parse_args()
-
+hostname = os.environ.get('HOSTNAME')
 conn = boto.connect_route53(os.environ.get('AWS_ACCESS_KEY'), os.environ.get('AWS_SECRET_KEY'))
-zone_id = get_zone_id(args.hostname)
+zone_id = get_zone_id(hostname)
 
-result = register(args.hostname, get_ip(args.local), args.ttl)
+result = register(hostname, get_ip('public'), 600)
 if not result:
   print "Error"
   exit(1)
 else:
-  print "Registered {}: {}".format(args.hostname, result.ChangeResourceRecordSetsResponse.ChangeInfo.Status)
+  print "Registered {}: {}".format(hostname, result.ChangeResourceRecordSetsResponse.ChangeInfo.Status)
 sys.stdout.flush()
 
 while True:
