@@ -20,8 +20,11 @@ def get_zone_id(hostname):
     exit(1)
   return zone.GetHostedZoneResponse.Id.split('/')[2]
 
-def get_ip():
+def get_local_ip():
   return requests.get("http://169.254.169.254/latest/meta-data/local-ipv4").content
+  
+def get_public_ip():
+  return requests.get("http://169.254.169.254/latest/meta-data/public-ipv4").content
 
 def register(hostname, ip, ttl):
   changes = ResourceRecordSets(conn, zone_id)
@@ -29,16 +32,19 @@ def register(hostname, ip, ttl):
   change.add_value(ip)
   return changes.commit()
 
-hostname = os.environ.get('HOSTNAME')
+hostname_local  = os.environ.get('HOSTNAME_LOCAL')
+hostname_public = os.environ.get('HOSTNAME_PUBLIC')
 conn = boto.connect_route53(os.environ.get('AWS_ACCESS_KEY'), os.environ.get('AWS_SECRET_KEY'))
 zone_id = get_zone_id(hostname)
 
-result = register(hostname, get_ip(), 600)
+result_local = register(hostname_local, get_local_ip(), 600)
 if not result:
-  print "Error"
   exit(1)
-else:
-  print "Registered {}: {}".format(hostname, result.ChangeResourceRecordSetsResponse.ChangeInfo.Status)
+
+result_public = register(hostname_public, get_public_ip(), 600)
+if not result_public:
+  exit(1)
+
 sys.stdout.flush()
 
 while True:
