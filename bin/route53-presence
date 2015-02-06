@@ -38,7 +38,7 @@ conn = boto.connect_route53(os.environ.get('AWS_ACCESS_KEY'), os.environ.get('AW
 zone_id = get_zone_id(hostname_local)
 
 result_local = register(hostname_local, get_local_ip(), 600)
-if not result:
+if not result_local:
   exit(1)
 
 result_public = register(hostname_public, get_public_ip(), 600)
