@@ -35,7 +35,7 @@ def register(hostname, ip, ttl):
 hostname_local  = os.environ.get('HOSTNAME_LOCAL')
 hostname_public = os.environ.get('HOSTNAME_PUBLIC')
 conn = boto.connect_route53(os.environ.get('AWS_ACCESS_KEY'), os.environ.get('AWS_SECRET_KEY'))
-zone_id = get_zone_id(hostname)
+zone_id = get_zone_id(hostname_local)
 
 result_local = register(hostname_local, get_local_ip(), 600)
 if not result:
