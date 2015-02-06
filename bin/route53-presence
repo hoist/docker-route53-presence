@@ -20,12 +20,8 @@ def get_zone_id(hostname):
     exit(1)
   return zone.GetHostedZoneResponse.Id.split('/')[2]
 
-def get_ip(local):
-  if local:
-    scope = 'local'
-  else:
-    scope = 'public'
-  return requests.get("http://169.254.169.254/latest/meta-data/{}-ipv4".format(scope)).content
+def get_ip():
+  return requests.get("http://169.254.169.254/latest/meta-data/public-ipv4").content
 
 def register(hostname, ip, ttl):
   changes = ResourceRecordSets(conn, zone_id)
@@ -37,7 +33,7 @@ hostname = os.environ.get('HOSTNAME')
 conn = boto.connect_route53(os.environ.get('AWS_ACCESS_KEY'), os.environ.get('AWS_SECRET_KEY'))
 zone_id = get_zone_id(hostname)
 
-result = register(hostname, get_ip('public'), 600)
+result = register(hostname, get_ip(), 600)
 if not result:
   print "Error"
   exit(1)
