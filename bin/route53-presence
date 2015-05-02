@@ -41,10 +41,6 @@ result_local = register(hostname_local, get_local_ip(), 600)
 if not result_local:
   exit(1)
 
-result_public = register(hostname_public, get_public_ip(), 600)
-if not result_public:
-  exit(1)
-
 sys.stdout.flush()
 
 while True:
