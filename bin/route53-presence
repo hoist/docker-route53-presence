@@ -36,7 +36,7 @@ hostname_local  = os.environ.get('HOSTNAME_LOCAL')
 conn = boto.connect_route53(os.environ.get('AWS_ACCESS_KEY'), os.environ.get('AWS_SECRET_KEY'))
 zone_id = get_zone_id(hostname_local)
 
-result_local = register(hostname_local, get_local_ip(), 600)
+result_local = register(hostname_local, get_local_ip(), int(os.environ.get('TTL')))
 if not result_local:
   exit(1)
 

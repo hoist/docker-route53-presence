@@ -1,5 +1,7 @@
-FROM stackbrew/ubuntu:13.10
-MAINTAINER Roman Atachiants "roman@misakai.com"
+FROM stackbrew/ubuntu:14.04
+MAINTAINER Hoist "support@hoist.io"
+
+ENV TTL 600
 
 RUN apt-get update -qq
 RUN apt-get install -y python-boto python-requests
